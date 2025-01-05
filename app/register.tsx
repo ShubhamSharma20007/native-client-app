@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
@@ -16,246 +17,264 @@ export default function Register() {
   const [showForm, setShowForm] = useState(true);
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20 }}
+    <ImageBackground
+      source={require("../assets/images/background_image.jpg")}
+      style={styles.backgroundImage}
     >
-      <View
+      <ScrollView
         style={{
-          height: 170,
-          flexDirection: "column",
-          justifyContent: "center",
+          flex: 1,
+          backgroundColor: "rgba(255, 255, 255, 0.7)",
+          paddingHorizontal: 20,
         }}
       >
-        <Text style={styles.title}>Register Form</Text>
-        <Text style={styles.desc}>Fill the fields for Registration form</Text>
-      </View>
-      <View>
         {showForm ? (
-          <View style={{ marginBottom: 10 }}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="BRC Full Name"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="School Name"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                maxLength={6}
-                style={styles.input}
-                placeholder="Pincode"
-                inputMode="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="School Dise Code"
-                inputMode="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Rojmel Name"
-                inputMode="text"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Cluster Name"
-                inputMode="text"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Block Name"
-                inputMode="text"
-              />
-            </View>
-          </View>
-        ) : (
-          <View style={{ marginBottom: 10 }}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Bank Name"
-                inputMode="text"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Bank  Branch Name"
-                inputMode="text"
-              />
-            </View>
+          <View
+            style={{
+              height: 260,
 
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Bank  Account Name"
-                inputMode="numeric"
-                maxLength={12}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Address"
-                inputMode="text"
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                maxLength={10}
-                style={styles.input}
-                placeholder="Mobile No."
-                inputMode="numeric"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Bussiness Email"
-                inputMode="email"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                numberOfLines={1}
-                style={styles.input}
-                placeholder="Password"
-                inputMode="text"
-              />
-            </View>
-          </View>
-        )}
-
-        {showForm ? (
-          <TouchableOpacity
-            onPress={() => {
-              setShowForm(false);
+              flexDirection: "column",
+              justifyContent: "center",
             }}
           >
-            <Text
-              style={{
-                textAlign: "right",
-                marginRight: 20,
-                fontSize: 16,
-                color: "#1F8BEF",
-                textDecorationLine: "underline",
-                fontWeight: "700",
-              }}
-            >
-              Next fields
+            <Text style={[styles.title, { color: "#1a237e" }]}>Sign Up</Text>
+            <Text style={styles.desc}>
+              Create you accounr today to experience
             </Text>
-          </TouchableOpacity>
+            <Text style={styles.desc}>easy and organizer accounting.</Text>
+          </View>
         ) : (
-          <TouchableOpacity
-            onPress={() => {
-              setShowForm(true);
-            }}
-          >
-            <Text
-              style={{
-                textAlign: "left",
-                marginRight: 20,
-                fontSize: 16,
-                color: "#1F8BEF",
-                textDecorationLine: "underline",
-                fontWeight: "700",
-              }}
-            >
-              Previous fields
-            </Text>
-          </TouchableOpacity>
+          <View style={{ marginTop: 80 }}></View>
         )}
-        {!showForm && (
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.textButton}>Register</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      {!showForm && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 6,
-            marginTop: 20,
-            marginBottom: 30,
-          }}
-        >
-          <Text style={{ textAlign: "center", fontSize: 16 }}>
-            Already have an account?
-          </Text>
+        <View>
+          {showForm ? (
+            <View style={{ marginBottom: 10 }}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="BRC Full Name"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="School Name"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  maxLength={6}
+                  style={styles.input}
+                  placeholder="Pincode"
+                  inputMode="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="School Dise Code"
+                  inputMode="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Rojmel Name"
+                  inputMode="text"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Cluster Name"
+                  inputMode="text"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Block Name"
+                  inputMode="text"
+                />
+              </View>
+            </View>
+          ) : (
+            <View style={{ marginBottom: 10 }}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Bank Name"
+                  inputMode="text"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Bank  Branch Name"
+                  inputMode="text"
+                />
+              </View>
 
-          <TouchableOpacity onPress={() => router.push("/")}>
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 16,
-                color: "#1F8BEF",
-                textDecorationLine: "underline",
-                fontWeight: "700",
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Bank  Account Name"
+                  inputMode="numeric"
+                  maxLength={12}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Address"
+                  inputMode="text"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  maxLength={10}
+                  style={styles.input}
+                  placeholder="Mobile No."
+                  inputMode="numeric"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Bussiness Email"
+                  inputMode="email"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  numberOfLines={1}
+                  style={styles.input}
+                  placeholder="Password"
+                  inputMode="text"
+                />
+              </View>
+            </View>
+          )}
+
+          {showForm ? (
+            <TouchableOpacity
+              onPress={() => {
+                setShowForm(false);
               }}
             >
-              Login
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  textAlign: "right",
+                  marginRight: 20,
+                  fontSize: 16,
+                  color: "#1a237e",
+                  fontWeight: "700",
+                  marginBottom: 20,
+                }}
+              >
+                Next fields
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                setShowForm(true);
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "left",
+                  marginRight: 20,
+                  fontSize: 16,
+                  color: "#1a237e",
+
+                  fontWeight: "700",
+                }}
+              >
+                Previous fields
+              </Text>
+            </TouchableOpacity>
+          )}
+          {!showForm && (
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.textButton}>Create Account</Text>
+            </TouchableOpacity>
+          )}
         </View>
-      )}
-    </ScrollView>
+        {!showForm && (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: 6,
+              marginTop: 20,
+              marginBottom: 30,
+            }}
+          >
+            <Text style={{ textAlign: "center", fontSize: 16 }}>
+              Already have an account?
+            </Text>
+
+            <TouchableOpacity onPress={() => router.push("/")}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 16,
+                  color: "#1a237e",
+
+                  fontWeight: "700",
+                }}
+              >
+                Sign In
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+  },
   inputContainer: {
-    backgroundColor: "#E5EBFF",
-    padding: 10,
-    borderRadius: 10,
     marginBottom: 20,
   },
   input: {
     width: "100%",
-    backgroundColor: "#E5EBFF",
+    height: 50,
+    backgroundColor: "#F1F4FF",
     paddingLeft: 20,
     paddingRight: 10,
-    paddingVertical: 10,
     borderRadius: 10,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
     fontSize: 16,
     fontWeight: "semibold",
   },
   button: {
-    paddingVertical: 20,
+    height: 50,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 20,
-    paddingHorizontal: 10,
-    backgroundColor: "#1F8BEF",
+    backgroundColor: "#1a237e",
     borderRadius: 10,
   },
   textButton: {
@@ -268,9 +287,12 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "bold",
     textAlign: "center",
+    marginBottom: 10,
   },
   desc: {
     textAlign: "center",
     fontSize: 16,
+    fontWeight: 500,
+    letterSpacing: -0.5,
   },
 });

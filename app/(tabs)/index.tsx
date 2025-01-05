@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  StatusBar,
   TouchableOpacity,
   TextInput,
 } from "react-native";
@@ -37,95 +38,100 @@ const CustomersScreen = ({ navigation }) => {
   ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.storePicker}>
-          <Text style={styles.storeText}>Ekta Stores</Text>
-          <Ionicons name="chevron-down" size={20} color="white" />
-        </View>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Text style={styles.staffText}>Staff</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Rest of your existing code */}
-      <View style={styles.actionButtons}>
-        <View style={styles.actionItem}>
-          <View style={[styles.actionIcon, { backgroundColor: "#FF5757" }]}>
-            <Text style={styles.iconText}>₹</Text>
+    <>
+      <StatusBar animated={true} barStyle={"light-content"} />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.storePicker}>
+            <Text style={styles.storeText}>Ekta Stores</Text>
+            <Ionicons name="chevron-down" size={20} color="white" />
           </View>
-          <Text style={styles.actionText}>Send Money</Text>
-        </View>
-        <View style={styles.actionItem}>
-          <View style={[styles.actionIcon, { backgroundColor: "#4CAF50" }]}>
-            <Ionicons name="document-text" size={20} color="white" />
-          </View>
-          <Text style={styles.actionText}>Payment History</Text>
-        </View>
-        <TouchableOpacity style={styles.loanButton}>
-          <Text style={styles.loanText}>Get Loan upto ₹1 Lakh</Text>
-          <Text style={styles.applyText}>Apply</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.tabContainer}>
-        <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-          <Text style={styles.activeTabText}>Customers</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <Text style={styles.tabText}>Suppliers</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#666" />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Customers"
-          placeholderTextColor="#666"
-        />
-        <View style={styles.filterContainer}>
-          <Ionicons name="filter" size={20} color="#666" />
           <TouchableOpacity onPress={() => navigation.openDrawer()}>
-            <Ionicons name="menu" size={20} color="#666" />
+            <Text style={styles.staffText}>Staff</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      <ScrollView>
-        {customers.map((customer) => (
-          <View key={customer.id} style={styles.customerItem}>
-            <View style={styles.customerInfo}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{customer.id}</Text>
-              </View>
-              <View>
-                <Text style={styles.customerName}>{customer.name}</Text>
-                {customer.dueDate && (
-                  <Text style={styles.dueDate}>Due in {customer.dueDate}</Text>
-                )}
-                {customer.reminderDate && (
-                  <Text style={styles.dueDate}>{customer.reminderDate}</Text>
-                )}
-                {customer.lastAction && (
-                  <Text style={styles.dueDate}>{customer.lastAction}</Text>
-                )}
-              </View>
+        {/* Rest of your existing code */}
+        <View style={styles.actionButtons}>
+          <View style={styles.actionItem}>
+            <View style={[styles.actionIcon, { backgroundColor: "#FF5757" }]}>
+              <Text style={styles.iconText}>₹</Text>
             </View>
-            <View style={styles.amountContainer}>
-              <Text style={styles.amount}>₹{customer.amount}</Text>
-              <TouchableOpacity style={styles.requestButton}>
-                <Text style={styles.requestText}>REQUEST</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.actionText}>Send Money</Text>
           </View>
-        ))}
-      </ScrollView>
+          <View style={styles.actionItem}>
+            <View style={[styles.actionIcon, { backgroundColor: "#4CAF50" }]}>
+              <Ionicons name="document-text" size={20} color="white" />
+            </View>
+            <Text style={styles.actionText}>Payment History</Text>
+          </View>
+          <TouchableOpacity style={styles.loanButton}>
+            <Text style={styles.loanText}>Get Loan upto ₹1 Lakh</Text>
+            <Text style={styles.applyText}>Apply</Text>
+          </TouchableOpacity>
+        </View>
 
-      <TouchableOpacity style={styles.addButton}>
-        <Text style={styles.addButtonText}>ADD CUSTOMER</Text>
-      </TouchableOpacity>
-    </View>
+        <View style={styles.tabContainer}>
+          <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+            <Text style={styles.activeTabText}>Customers</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tab}>
+            <Text style={styles.tabText}>Suppliers</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#666" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search Customers"
+            placeholderTextColor="#666"
+          />
+          <View style={styles.filterContainer}>
+            <Ionicons name="filter" size={20} color="#666" />
+            <TouchableOpacity onPress={() => navigation.openDrawer()}>
+              <Ionicons name="menu" size={20} color="#666" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <ScrollView>
+          {customers.map((customer) => (
+            <View key={customer.id} style={styles.customerItem}>
+              <View style={styles.customerInfo}>
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>{customer.id}</Text>
+                </View>
+                <View>
+                  <Text style={styles.customerName}>{customer.name}</Text>
+                  {customer.dueDate && (
+                    <Text style={styles.dueDate}>
+                      Due in {customer.dueDate}
+                    </Text>
+                  )}
+                  {customer.reminderDate && (
+                    <Text style={styles.dueDate}>{customer.reminderDate}</Text>
+                  )}
+                  {customer.lastAction && (
+                    <Text style={styles.dueDate}>{customer.lastAction}</Text>
+                  )}
+                </View>
+              </View>
+              <View style={styles.amountContainer}>
+                <Text style={styles.amount}>₹{customer.amount}</Text>
+                <TouchableOpacity style={styles.requestButton}>
+                  <Text style={styles.requestText}>REQUEST</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+
+        <TouchableOpacity style={styles.addButton}>
+          <Text style={styles.addButtonText}>ADD CUSTOMER</Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 
@@ -142,7 +148,7 @@ const ProfileScreen = () => (
   </View>
 );
 
-const App = () => {
+const Dashboard = () => {
   return (
     <Drawer.Navigator>
       <Drawer.Screen
@@ -164,11 +170,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    backgroundColor: "#1a237e",
-    padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    padding: 16,
+    paddingTop: 40,
+    backgroundColor: "#1a237e",
+    paddingVertical: 20,
   },
   storePicker: {
     flexDirection: "row",
@@ -322,4 +330,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Dashboard;

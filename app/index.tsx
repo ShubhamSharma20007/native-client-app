@@ -1,125 +1,140 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  ImageBackground,
+} from "react-native";
 import React from "react";
-import { Link } from "expo-router";
 import { TouchableOpacity } from "react-native";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Feather from "@expo/vector-icons/Feather";
-import { router } from "expo-router";
-
+import { Link, router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 export default function Login() {
   return (
-    <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20 }}>
-      <View
-        style={{
-          height: 260,
-          flexDirection: "column",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={styles.title}>Login Form</Text>
-        <Text style={styles.desc}>Enter your credential for login</Text>
-      </View>
-
-      <View style={{ marginBottom: 10 }}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Account Number"
-            inputMode="decimal"
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={true}
-          />
-        </View>
-      </View>
-      <View style={styles.button}>
-        <Text style={styles.textButton}>Login</Text>
-      </View>
-
-      <View
-        style={{
-          height: 140,
-          flexDirection: "column",
-          justifyContent: "center",
-        }}
-      >
-        <Text
+    <ImageBackground
+      source={require("../assets/images/background_image.jpg")}
+      style={styles.backgroundImage}
+    >
+      <StatusBar animated={true} />
+      <View style={styles.mainContainer}>
+        <View
           style={{
-            textAlign: "center",
-            fontSize: 16,
-            fontWeight: "600",
-            color: "#1F8BEF",
+            height: 260,
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
-          Forgot Password?
-        </Text>
-      </View>
-      <View style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}>
-        <Text style={{ textAlign: "center", fontSize: 16 }}>
-          Don't have a account?
-        </Text>
+          <Text style={[styles.title, { color: "#1a237e" }]}>Sign In</Text>
+          <Text style={styles.desc}>Welcome back you've</Text>
+          <Text style={styles.desc}>been missed!</Text>
+        </View>
 
-        <TouchableOpacity onPress={() => router.push("/register")}>
-          <Text
+        <View style={{ marginBottom: 10 }}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Account Number"
+              inputMode="decimal"
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry={true}
+            />
+          </View>
+        </View>
+        <View style={styles.button}>
+          <Text style={styles.textButton}>Login</Text>
+        </View>
+
+        <View
+          style={{
+            height: 100,
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <Link
+            href="/resetPassword"
             style={{
               textAlign: "center",
               fontSize: 16,
-
-              color: "#1F8BEF",
-              textDecorationLine: "underline",
-              fontWeight: "700",
+              fontWeight: "600",
+              color: "#1a237e",
             }}
           >
-            Sign Up
+            Forgot Password
+          </Link>
+        </View>
+        <View
+          style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}
+        >
+          <Text style={{ textAlign: "center", fontSize: 16 }}>
+            Don't have an account?
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/(tabs)")}>
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 16,
 
-              color: "#1F8BEF",
-              textDecorationLine: "underline",
-              fontWeight: "700",
-            }}
-          >
-            Dashboard
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/register")}>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 16,
+                color: "#1a237e",
+                fontWeight: "700",
+              }}
+            >
+              Sign Up
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)")}>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 16,
+                color: "#1a237e",
+                fontWeight: "700",
+              }}
+            >
+              Dashboard
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+  },
+  mainContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+  },
   inputContainer: {
-    backgroundColor: "#E5EBFF",
-    padding: 10,
-    borderRadius: 10,
     marginBottom: 20,
   },
   input: {
     width: "100%",
-    backgroundColor: "#E5EBFF",
+    height: 50,
+    backgroundColor: "#F1F4FF",
     paddingLeft: 20,
     paddingRight: 10,
-    paddingVertical: 10,
     borderRadius: 10,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
     fontSize: 16,
     fontWeight: "semibold",
   },
   button: {
-    paddingVertical: 20,
+    height: 50,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 20,
-    paddingHorizontal: 10,
-    backgroundColor: "#1F8BEF",
+    backgroundColor: "#1a237e",
     borderRadius: 10,
   },
   textButton: {
@@ -132,9 +147,11 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "bold",
     textAlign: "center",
+    marginBottom: 10,
   },
   desc: {
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 20,
+    fontWeight: "700",
   },
 });

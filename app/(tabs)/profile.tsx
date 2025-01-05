@@ -54,7 +54,7 @@ export default function ItemsScreen() {
   );
 }
 
-const FeatureItem = ({ icon: string, text }: { icon: any; text: string }) => (
+const FeatureItem = ({ icon, text }) => (
   <View style={styles.featureItem}>
     <View style={styles.iconContainer}>
       <Ionicons name={icon} size={24} color="#0066CC" />
@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#0066CC",
+    paddingTop: 40,
+    backgroundColor: "#1a237e",
     paddingVertical: 20,
   },
   title: {
