@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
-
+import Toast from "react-native-toast-message";
 export default function Layout() {
   return (
     <Stack
