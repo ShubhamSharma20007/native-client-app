@@ -4,4 +4,4 @@ const API_ROUTE = `${process.env.EXPO_PUBLIC_BACKEND_URL}/${process.env.EXPO_PUB
 
 //  auth
 const AUTH = 'auth'
-export const REGISTER = `${API_ROUTE}/${AUTH}/register`
+export const REGISTER = `${API_ROUTE}/${AUTH}/register`;

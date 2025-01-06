@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -14,7 +14,8 @@ import { router } from "expo-router";
 import { Instance } from "@/lib/instance";
 import Toast from "react-native-toast-message";
 import { REGISTER } from "@/constant/api-communication";
-
+import { ActivityIndicator } from "react-native";
+import { useRouter } from "expo-router";
 interface FormData {
   brc_full_name: string;
   school_name: string;
@@ -36,9 +37,10 @@ interface FormData {
 }
 
 export default function Register() {
+  const router = useRouter();
   const [currentSection, setCurrentSection] = useState(1);
+  const [isloading, setLoading] = useState(false);
   const { height } = Dimensions.get("window");
-
   const [formData, setFormData] = useState<FormData>({
     brc_full_name: "",
     school_name: "",
@@ -80,12 +82,16 @@ export default function Register() {
           (field) => !formData[field as keyof FormData]
         );
         if (emptyField1) {
-          ToastAndroid.show(
-            `Please fill in ${emptyField1
+          Toast.show({
+            type: "success",
+            text1: "❌ Error",
+            text2Style: {
+              fontSize: 12,
+            },
+            text2: `Please fill in ${emptyField1
               .replace(/([A-Z])/g, " $1")
               .toLowerCase()}`,
-            ToastAndroid.TOP
-          );
+          });
           return false;
         }
         return true;
@@ -104,12 +110,17 @@ export default function Register() {
           (field) => !formData[field as keyof FormData]
         );
         if (emptyField2) {
-          ToastAndroid.show(
-            `Please fill in ${emptyField2
+          Toast.show({
+            type: "success",
+            text1: "❌ Error",
+            text2Style: {
+              fontSize: 12,
+            },
+            text2: `Please fill in ${emptyField2
               .replace(/([A-Z])/g, " $1")
               .toLowerCase()}`,
-            ToastAndroid.SHORT
-          );
+          });
+
           return false;
         }
         return true;
@@ -120,12 +131,16 @@ export default function Register() {
           (field) => !formData[field as keyof FormData]
         );
         if (emptyField3) {
-          ToastAndroid.show(
-            `Please fill in ${emptyField3
+          Toast.show({
+            type: "success",
+            text1: "❌ Error",
+            text2Style: {
+              fontSize: 12,
+            },
+            text2: `Please fill in ${emptyField3
               .replace(/([A-Z])/g, " $1")
               .toLowerCase()}`,
-            ToastAndroid.SHORT
-          );
+          });
           return false;
         }
         return true;
@@ -146,20 +161,35 @@ export default function Register() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     if (validateSection(3)) {
-      console.warn("working");
       try {
         const response = await Instance.post(REGISTER, formData);
-        console.warn("Response Data:", response.data);
-      } catch (err: any) {
-        console.warn("Error:", err.message);
-        if (err.response) {
-          console.warn("Response Error:", err.response.data);
-        } else if (err.request) {
-          console.warn("Request Error:", err.request);
-        } else {
-          console.warn("Axios Error:", err.message);
+        if (response.status === 200 || response.status === 201) {
+          Toast.show({
+            type: "success",
+            text1: "✅ Sucesss",
+            text2Style: {
+              fontSize: 12,
+            },
+            text2: "User Register Successfully",
+          });
+          router.push("/");
         }
+      } catch (err: any) {
+        console.warn("Error:", err);
+        if (err.response) {
+          Toast.show({
+            type: "error",
+            text1: "❌ Error",
+            text2Style: {
+              fontSize: 12,
+            },
+            text2: err.response.data.message,
+          });
+        }
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -387,6 +417,7 @@ export default function Register() {
                   handleSubmit();
                 }}
               >
+                {/* <ActivityIndicator size="small" color="white" /> */}
                 <Text style={styles.textButton}>Create Account</Text>
               </TouchableOpacity>
             )}
