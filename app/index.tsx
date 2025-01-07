@@ -13,8 +13,7 @@ import Toast from "react-native-toast-message";
 import { Instance } from "@/lib/instance";
 import { LOGIN } from "@/constant/apis";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-// import
+import { setLocalStorage } from "@/helper/asyncStorage";
 
 type InputsType = {
   bank_account_no: string;
@@ -41,7 +40,7 @@ export default function Login() {
       const response = await Instance.post(LOGIN, inputsValue);
       if (response.status === 200 || response.status === 201) {
         const token = response.data.data.token;
-        await AsyncStorage.setItem("token", JSON.stringify(token));
+        await setLocalStorage("auth_token", token);
         Toast.show({
           type: "success",
           text1: "✅ Success",
