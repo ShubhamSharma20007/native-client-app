@@ -1,3 +1,4 @@
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -5,19 +6,92 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import {
+  forgetPasswordApi,
+  resetPasswordApi,
+} from "@/helper/api-communication";
+import Toast from "react-native-toast-message";
+import send from "@expo/vector-icons/Feather";
+import Feather from "@expo/vector-icons/Feather";
+import { useRouter } from "expo-router";
 
 const windowWidth = Dimensions.get("window").width;
-
-interface ResetProps {}
-
-const Reset: React.FC<ResetProps> = () => {
+const Reset = () => {
   const [email, setEmail] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [otp, setOtp] = useState<boolean>(false);
+  const [otpValue, setOtpValue] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false); // For button loading state
+  const router = useRouter();
+  const handleForgetPassword = async () => {
+    setLoading(true);
+    try {
+      const request = await forgetPasswordApi(email);
+      if (request.data && request.statusCode === 200) {
+        setOtp(true);
+      } else {
+        console.log("Request failed");
+      }
+    } catch (error) {
+      console.error("Error in forget password API", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleResetPassword = () => {
-    // Handle reset password logic here
-    console.log("Reset password for:", email);
+  // validation of password and confirm password
+  const validation = (password: string, confirmPassword: string) => {
+    if (password.trim() !== confirmPassword.trim()) {
+      Toast.show({
+        type: "error",
+        text1: "❌ Error",
+        text2Style: {
+          fontSize: 12,
+        },
+        text2: "Passoword does not match",
+      });
+      return false;
+    } else if (password.length < 6) {
+      Toast.show({
+        type: "error",
+        text1: "❌ Error",
+        text2Style: {
+          fontSize: 12,
+        },
+        text2: "Passoword should be atleast 6 characters.",
+      });
+
+      return;
+    }
+    return true;
+  };
+  const handleResetPassword = async () => {
+    if (validation(newPassword, confirmPassword)) {
+      const request = await resetPasswordApi(email, otpValue, newPassword);
+      if (request.statusCode === 200) {
+        Toast.show({
+          type: "success",
+          text1: "✅ Success",
+          text2Style: {
+            fontSize: 12,
+          },
+          text2: "Password reset successfully",
+        });
+        router.push("/");
+      }
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "❌ Error",
+        text2Style: {
+          fontSize: 12,
+        },
+        text2: "Something went wrong",
+      });
+    }
   };
 
   return (
@@ -29,23 +103,108 @@ const Reset: React.FC<ResetProps> = () => {
             Enter your email address to reset your password
           </Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            placeholderTextColor="#666"
-          />
+          <View>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your registered email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholderTextColor="#666"
+              editable={!otp}
+            />
 
+            {/* Password container */}
+            {otp && (
+              <>
+                <View
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 10,
+
+                    marginBottom: 15,
+                  }}
+                >
+                  <TextInput
+                    style={[
+                      styles.input,
+                      {
+                        flex: 1,
+                        marginBottom: 0,
+                      },
+                    ]}
+                    placeholder="Enter the OTP"
+                    value={otpValue}
+                    onChangeText={setOtpValue}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    placeholderTextColor="#666"
+                  />
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      backgroundColor: "#1a237e",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 10,
+                    }}
+                  >
+                    <Feather name="send" size={24} color="white" />
+                  </TouchableOpacity>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholderTextColor="#666"
+                  secureTextEntry
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholderTextColor="#666"
+                  secureTextEntry
+                />
+              </>
+            )}
+          </View>
           <TouchableOpacity
-            style={styles.button}
-            onPress={handleResetPassword}
+            style={[
+              styles.button,
+              (loading ||
+                (!otp && email.trim() === "") ||
+                (otp && otpValue.trim() === "")) &&
+                styles.disabledButton,
+            ]}
+            onPress={!otp ? handleForgetPassword : handleResetPassword}
             activeOpacity={0.8}
+            disabled={
+              loading ||
+              (!otp && email.trim() === "") ||
+              (otp && otpValue.trim() === "")
+            }
           >
-            <Text style={styles.textButton}>Reset Password</Text>
+            {loading ? (
+              <ActivityIndicator color={"white"} />
+            ) : (
+              <Text style={styles.textButton}>
+                {otp ? "Reset Password" : "Send OTP"}
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -75,6 +234,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 3, // for Android shadow
   },
+  disabledButton: {
+    backgroundColor: "#ccc",
+  },
   formContainer: {
     width: "100%",
   },
@@ -94,6 +256,7 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
+    marginBottom: 15,
     backgroundColor: "#F1F4FF",
     paddingLeft: 20,
     paddingRight: 10,

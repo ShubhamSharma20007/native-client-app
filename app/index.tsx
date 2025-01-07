@@ -5,11 +5,66 @@ import {
   View,
   ImageBackground,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import Toast from "react-native-toast-message";
+import { Instance } from "@/lib/instance";
+import { LOGIN } from "@/constant/apis";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+// import
+
+type InputsType = {
+  bank_account_no: string;
+  password: string;
+};
+
 export default function Login() {
+  const router = useRouter();
+  const [inputsValue, setInputsValue] = useState<InputsType>({
+    bank_account_no: "",
+    password: "",
+  });
+  const handleSubmit = async () => {
+    try {
+      if (!inputsValue.bank_account_no || !inputsValue.password) {
+        Toast.show({
+          type: "error",
+          text1: "❌ Error",
+          text2: "Both fields are required!",
+        });
+        return;
+      }
+
+      const response = await Instance.post(LOGIN, inputsValue);
+      if (response.status === 200 || response.status === 201) {
+        const token = response.data.data.token;
+        await AsyncStorage.setItem("token", JSON.stringify(token));
+        Toast.show({
+          type: "success",
+          text1: "✅ Success",
+          text2: "Login Successful",
+          text2Style: {
+            fontSize: 12,
+          },
+        });
+        router.push("/(tabs)");
+      }
+    } catch (err: any) {
+      console.warn("Error:", err);
+      Toast.show({
+        type: "error",
+        text1: "❌ Error",
+        text2: err.response?.data?.message || "An error occurred",
+        text2Style: {
+          fontSize: 12,
+        },
+      });
+    }
+  };
+
   return (
     <ImageBackground
       source={require("../assets/images/background_image.jpg")}
@@ -35,6 +90,13 @@ export default function Login() {
               style={styles.input}
               placeholder="Account Number"
               inputMode="decimal"
+              value={inputsValue.bank_account_no}
+              onChangeText={(text) =>
+                setInputsValue((prev) => ({
+                  ...prev,
+                  bank_account_no: text,
+                }))
+              }
             />
           </View>
           <View style={styles.inputContainer}>
@@ -42,12 +104,21 @@ export default function Login() {
               style={styles.input}
               placeholder="Password"
               secureTextEntry={true}
+              value={inputsValue.password}
+              onChangeText={(text) =>
+                setInputsValue((prev) => ({ ...prev, password: text }))
+              }
             />
           </View>
         </View>
-        <View style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            handleSubmit();
+          }}
+        >
           <Text style={styles.textButton}>Login</Text>
-        </View>
+        </TouchableOpacity>
 
         <View
           style={{
@@ -85,18 +156,6 @@ export default function Login() {
               }}
             >
               Sign Up
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/(tabs)")}>
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 16,
-                color: "#1a237e",
-                fontWeight: "700",
-              }}
-            >
-              Dashboard
             </Text>
           </TouchableOpacity>
         </View>

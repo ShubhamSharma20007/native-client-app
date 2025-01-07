@@ -13,7 +13,7 @@ import {
 import { router } from "expo-router";
 import { Instance } from "@/lib/instance";
 import Toast from "react-native-toast-message";
-import { REGISTER } from "@/constant/api-communication";
+import { REGISTER } from "@/constant/apis";
 import { ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 interface FormData {
@@ -161,7 +161,6 @@ export default function Register() {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
     if (validateSection(3)) {
       try {
         const response = await Instance.post(REGISTER, formData);
