@@ -1,163 +1,270 @@
-// App.tsx
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import {
-  StyleSheet,
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  Platform,
-  Modal,
+  StyleSheet,
+  Animated,
+  Image,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { Picker } from "@react-native-picker/picker";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  FontAwesome5,
+} from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
+import { useRouter } from "expo-router";
 
-type Transaction = {
-  id: string;
-  time: string;
-  amount: number;
-  type: "IN" | "OUT";
-  description: string;
-  paymentMode: "CASH" | "CARD" | "UPI";
-};
-
-const initialTransactions: Transaction[] = [
-  {
-    id: "1",
-    time: "05:33 PM",
-    amount: 234,
-    type: "IN",
-    description: "sdfhasjdf",
-    paymentMode: "CASH",
-  },
-  {
-    id: "2",
-    time: "05:33 PM",
-    amount: 234,
-    type: "IN",
-    description: "sdfhasjdf",
-    paymentMode: "CASH",
-  },
-  {
-    id: "3",
-    time: "05:33 PM",
-    amount: 234,
-    type: "IN",
-    description: "sdfhasjdf",
-    paymentMode: "CASH",
-  },
-  {
-    id: "4",
-    time: "05:33 PM",
-    amount: 234,
-    type: "IN",
-    description: "sdfhasjdf",
-    paymentMode: "CASH",
-  },
-];
-
-export default function Pay() {
-  const [date, setDate] = useState(new Date());
-  const [paymentMode, setPaymentMode] = useState<string>("All");
-  const [transactions] = useState<Transaction[]>(initialTransactions);
-
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  };
-
+const Pay = () => {
+  const router = useRouter();
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
+    <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>My Business</Text>
-        <TouchableOpacity>
-          <Ionicons name="pencil" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.headerLeft}>
+          <Ionicons name="book-outline" size={24} color="white" />
+          <Text style={styles.headerTitle}>Pay</Text>
+        </View>
+        <Ionicons name="pencil" size={24} color="white" />
       </View>
 
-      {/* Balance Section */}
+      {/* Balance Cards */}
       <View style={styles.balanceContainer}>
-        <View>
-          <Text style={styles.balanceLabel}>Total Balance</Text>
-          <Text style={styles.balanceAmount}>₹234</Text>
-        </View>
-        <View>
-          <Text style={styles.balanceLabel}>Today's Balance</Text>
-          <Text style={styles.balanceAmount}>₹234</Text>
-        </View>
-        <TouchableOpacity style={styles.reportButton}>
-          <Text style={styles.reportButtonText}>View Report</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Filters */}
-      <View style={styles.filtersContainer}>
-        <TouchableOpacity style={styles.dateButton}>
-          <Text>Date: {formatDate(date)}</Text>
-        </TouchableOpacity>
-
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={paymentMode}
-            onValueChange={(itemValue) => setPaymentMode(itemValue)}
-            style={styles.picker}
+        <View style={[styles.balanceCard]}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
           >
-            <Picker.Item label="All" value="All" />
-            <Picker.Item label="Cash" value="CASH" />
-            <Picker.Item label="Card" value="CARD" />
-            <Picker.Item label="UPI" value="UPI" />
-          </Picker>
-        </View>
-      </View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRightWidth: 1,
+                borderRightColor: "#eee",
+              }}
+            >
+              <Text style={styles.balanceAmount}>₹ 234</Text>
+              <Text style={styles.balanceLabel}>Total Balance</Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
 
-      {/* Transactions List */}
-      <ScrollView style={styles.transactionsList}>
-        <View style={styles.listHeader}>
-          <Text style={styles.listHeaderText}>NAME</Text>
-          <View style={styles.amountHeader}>
-            <Text style={styles.listHeaderText}>OUT</Text>
-            <Text style={styles.listHeaderText}>IN</Text>
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.balanceAmount}>₹ 234</Text>
+              <Text style={styles.balanceLabel}>Cash in Hand</Text>
+            </View>
           </View>
         </View>
 
-        <Text style={styles.dateHeader}>04 Jan 2025 (TODAY)</Text>
-        <Text style={styles.entriesCount}>1 Entries</Text>
-
-        {transactions.map((transaction) => (
-          <View key={transaction.id} style={styles.transactionItem}>
-            <View style={styles.timeContainer}>
-              <Text style={styles.timeText}>{transaction.time}</Text>
-              <View style={styles.paymentModeTag}>
-                <Text style={styles.paymentModeText}>
-                  {transaction.paymentMode}
+        <View style={[styles.balanceCard]}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              gap: 10,
+            }}
+          >
+            <View
+              style={{
+                width: "50%",
+                paddingVertical: 4,
+                borderRightWidth: 1,
+                borderRightColor: "#eee",
+              }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+              >
+                <Text style={styles.balanceLabel}>Total Balance</Text>
+                <Text
+                  style={[
+                    styles.balanceAmount,
+                    {
+                      fontSize: 15,
+                      fontWeight: "500",
+                      color: "green",
+                      paddingRight: 8,
+                    },
+                  ]}
+                >
+                  ₹ 234657
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "100%",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+              >
+                <Text style={styles.balanceLabel}>Online</Text>
+                <Text
+                  style={[
+                    styles.balanceAmount,
+                    {
+                      fontSize: 15,
+                      fontWeight: "500",
+                      paddingRight: 8,
+                    },
+                  ]}
+                >
+                  ₹ 234
                 </Text>
               </View>
             </View>
-            <View style={styles.amountContainer}>
-              <Text style={styles.outAmount}>-</Text>
-              <Text style={styles.inAmount}>₹{transaction.amount}</Text>
+            <View
+              style={{
+                width: "50%",
+                borderColor: "#eee",
+                paddingVertical: 4,
+              }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+              >
+                <Text style={styles.balanceLabel}>Total Balance</Text>
+                <Text
+                  style={[
+                    styles.balanceAmount,
+                    {
+                      fontSize: 15,
+                      fontWeight: "500",
+                      color: "green",
+                      paddingRight: 8,
+                    },
+                  ]}
+                >
+                  ₹ 234657
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "100%",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: "row",
+                }}
+              >
+                <Text style={styles.balanceLabel}>Online</Text>
+                <Text
+                  style={[
+                    styles.balanceAmount,
+                    {
+                      fontSize: 15,
+                      fontWeight: "500",
+                      paddingRight: 8,
+                    },
+                  ]}
+                >
+                  ₹ 234
+                </Text>
+              </View>
             </View>
-            <Text style={styles.description}>
-              Description: {transaction.description}
-            </Text>
           </View>
-        ))}
+        </View>
+      </View>
+
+      {/* View Report Button */}
+      <TouchableOpacity style={styles.reportButton}>
+        <AntDesign name="filetext1" size={20} color="#1a237e" />
+        <Text style={styles.reportButtonText}>VIEW CASHBOOK REPORT</Text>
+      </TouchableOpacity>
+
+      {/* Date Section */}
+      <ScrollView>
+        <View style={styles.dateSection}>
+          <Text style={styles.dateText}>08 JAN</Text>
+          <View style={styles.entryCount}>
+            <Text style={styles.entryText}>0 Entry</Text>
+            <View style={styles.entryAmounts}>
+              <Text style={styles.outAmount}>₹ 0</Text>
+              <Text style={styles.inAmount}>₹ 0</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.dateSection}>
+          <Text style={styles.dateText}>08 JAN</Text>
+          <View style={styles.entryCount}>
+            <Text style={styles.entryText}>0 Entry</Text>
+            <View style={styles.entryAmounts}>
+              <Text style={styles.outAmount}>₹ 0</Text>
+              <Text style={styles.inAmount}>₹ 0</Text>
+            </View>
+          </View>
+        </View>
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Empty State */}
+      <View style={styles.emptyState}>
+        {/* <Image 
+          source={require('./path-to-your-empty-state-illustration.png')}
+          style={styles.emptyStateImage}
+        /> */}
+        <Text style={styles.emptyStateText}>
+          Hello! Let's make today's entries
+        </Text>
+      </View>
+
+      {/* Bottom Buttons */}
+      {/* <View style={styles.bottomButtons}>
+        <TouchableOpacity style={styles.outButton}>
+          <AntDesign name="minus" size={24} color="white" />
+          <Text style={styles.buttonText}>OUT</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.inButton}>
+          <AntDesign name="plus" size={24} color="white" />
+          <Text style={styles.buttonText}>IN</Text>
+        </TouchableOpacity>
+      </View> */}
+      <TouchableOpacity
+        style={styles.bottomButtons}
+        onPress={() => {
+          // router.push("/components/rojmelPayForm");
+        }}
+      >
+        <AntDesign name="plus" size={24} color="white" />
+        <Text style={{ color: "white" }}>Add Rojmel</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  headerTitle: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "500",
   },
   header: {
     flexDirection: "row",
@@ -168,131 +275,157 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a237e",
     paddingVertical: 20,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  balanceContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 16,
-    backgroundColor: "#f8f9fa",
-  },
-  balanceLabel: {
-    color: "#666",
-    fontSize: 14,
-  },
-  balanceAmount: {
-    color: "#22c55e",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  reportButton: {
-    backgroundColor: "#e6f0ff",
-    padding: 8,
-    borderRadius: 6,
-  },
-  reportButtonText: {
-    color: "#3b82f6",
-  },
-  filtersContainer: {
-    padding: 16,
-    flexDirection: "row",
-    gap: 12,
-  },
-  dateButton: {
-    flex: 1,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#e5e5e5",
-    borderRadius: 6,
-    justifyContent: "center",
-  },
-  pickerContainer: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#e5e5e5",
-    borderRadius: 6,
-
-    fontSize: 16,
-  },
-
-  transactionsList: {
-    flex: 1,
-  },
-  listHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 16,
-    paddingBottom: 8,
-  },
-  listHeaderText: {
-    color: "#666",
-    fontSize: 14,
-  },
-  amountHeader: {
-    flexDirection: "row",
-    gap: 32,
-  },
-  dateHeader: {
-    fontSize: 15,
-    fontWeight: "500",
-    paddingHorizontal: 16,
-  },
-  entriesCount: {
-    fontSize: 12,
-    color: "#666",
-    paddingHorizontal: 16,
-    marginBottom: 8,
-  },
-  transactionItem: {
-    padding: 16,
-    boxShadow: "0px 0px 0px 2px rgba(0,0,0,0.1)",
-    margin: 10,
-    borderRadius: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
-  },
-  timeContainer: {
+  headerCenter: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 4,
   },
-  timeText: {
-    fontSize: 14,
-  },
-  paymentModeTag: {
-    backgroundColor: "#e6f0ff",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  paymentModeText: {
-    color: "#3b82f6",
-    fontSize: 12,
-  },
-  amountContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 32,
-  },
-  outAmount: {
-    color: "#ef4444",
-    fontSize: 16,
-  },
-  inAmount: {
-    color: "#22c55e",
-    fontSize: 16,
-  },
-  description: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 4,
+  headerIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 8,
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
   },
+  balanceContainer: {
+    padding: 5,
+  },
+  balanceCard: {
+    backgroundColor: "#fff",
+
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+  },
+  balanceAmount: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  balanceLabel: {
+    fontSize: 14,
+    color: "#666",
+  },
+  balanceDetails: {
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+    paddingTop: 16,
+  },
+  balanceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  balanceText: {
+    color: "#666",
+  },
+  balanceValue: {
+    fontWeight: "bold",
+  },
+  reportButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+  },
+  reportButtonText: {
+    color: "#1a237e",
+    marginLeft: 8,
+    fontWeight: "bold",
+  },
+  dateSection: {
+    padding: 16,
+    marginBottom: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    elevation: 3,
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    shadowOffset: {
+      width: 4,
+      height: 4,
+    },
+  },
+  dateText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  entryCount: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 8,
+  },
+  entryText: {
+    color: "#666",
+  },
+  entryAmounts: {
+    flexDirection: "row",
+  },
+  outAmount: {
+    color: "red",
+    marginRight: 16,
+  },
+  inAmount: {
+    color: "green",
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+  },
+  emptyStateImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 16,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: "#666",
+  },
+  bottomButtons: {
+    color: "white",
+    paddingHorizontal: 20,
+    gap: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    height: 50,
+    display: "flex",
+    marginLeft: "auto",
+    minWidth: "30%",
+    alignItems: "center",
+    margin: 20,
+    backgroundColor: "#1a237e",
+    borderRadius: 50,
+  },
+  outButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ff1744",
+    padding: 16,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  inButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#00c853",
+    padding: 16,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
 });
+
+export default Pay;

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -28,16 +28,16 @@ const Reset = () => {
   const router = useRouter();
   const handleForgetPassword = async () => {
     setLoading(true);
-    try {
-      const request = await forgetPasswordApi(email);
-      if (request.data && request.statusCode === 200) {
-        setOtp(true);
-      } else {
-        console.log("Request failed");
-      }
-    } catch (error) {
-      console.error("Error in forget password API", error);
-    } finally {
+    const request = await forgetPasswordApi(email);
+    console.log(request);
+
+    if (request.data && request.statusCode === 200) {
+      setOtp(true);
+      setLoading(false);
+    } else {
+      console.log("Request failed");
+    }
+    if (!request) {
       setLoading(false);
     }
   };
@@ -51,7 +51,7 @@ const Reset = () => {
         text2Style: {
           fontSize: 12,
         },
-        text2: "Passoword does not match",
+        text2: "Password ConfirmPassword does not match.",
       });
       return false;
     } else if (password.length < 6) {
@@ -63,14 +63,16 @@ const Reset = () => {
         },
         text2: "Passoword should be atleast 6 characters.",
       });
-
-      return;
+      return false;
     }
     return true;
   };
   const handleResetPassword = async () => {
+    const cond = validation(newPassword, confirmPassword);
+    console.log(cond, 12);
     if (validation(newPassword, confirmPassword)) {
       const request = await resetPasswordApi(email, otpValue, newPassword);
+      console.log(request);
       if (request.statusCode === 200) {
         Toast.show({
           type: "success",
@@ -80,17 +82,9 @@ const Reset = () => {
           },
           text2: "Password reset successfully",
         });
+
         router.push("/");
       }
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "❌ Error",
-        text2Style: {
-          fontSize: 12,
-        },
-        text2: "Something went wrong",
-      });
     }
   };
 
@@ -148,15 +142,25 @@ const Reset = () => {
                   <TouchableOpacity
                     activeOpacity={0.8}
                     style={{
-                      width: 50,
                       height: 50,
+                      display: "flex",
+                      flexDirection: "row",
                       backgroundColor: "#1a237e",
                       justifyContent: "center",
                       alignItems: "center",
                       borderRadius: 10,
+                      gap: 10,
+                      paddingHorizontal: 10,
                     }}
                   >
-                    <Feather name="send" size={24} color="white" />
+                    {/* <Feather name="send" size={20} color="white" /> */}
+                    <Text
+                      style={{
+                        color: "white",
+                      }}
+                    >
+                      Resend OTP
+                    </Text>
                   </TouchableOpacity>
                 </View>
                 <TextInput
@@ -225,11 +229,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     padding: 24,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 3, // for Android shadow
@@ -262,7 +266,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     borderRadius: 10,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "semibold",
   },
   button: {
     height: 50,

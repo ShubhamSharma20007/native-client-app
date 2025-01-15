@@ -1,6 +1,8 @@
 import { Instance } from "@/lib/instance";
 import Toast from "react-native-toast-message";
-import { FORGET_PASSWORD, RESET_PASSWORD } from "@/constant/apis";
+import { FORGET_PASSWORD, RESET_PASSWORD, CREATE_HEADS, GET_HEADS } from "@/constant/apis";
+import { HeadInferface } from "@/types/headType"
+import { getLocalStorage } from "@/helper/asyncStorage"
 //  Forget Password
 export const forgetPasswordApi = async (email: string) => {
     try {
@@ -28,6 +30,7 @@ export const forgetPasswordApi = async (email: string) => {
                 text2: err.response.data.message,
             });
         }
+        return false
     }
 }
 
@@ -51,7 +54,7 @@ export const resetPasswordApi = async (email: string, otp: number | string, newP
             return response.data;
         }
     } catch (err: any) {
-        console.warn("Error:", err);
+        console.warn("Error:", err.message);
         if (err.response) {
             Toast.show({
                 type: "error",
@@ -62,5 +65,69 @@ export const resetPasswordApi = async (email: string, otp: number | string, newP
                 text2: err.response.data.message,
             });
         }
+        return false
     }
+}
+
+
+/********************    Head     ******************** */
+
+// create
+export const createHead = async (data: HeadInferface) => {
+    const token = await getLocalStorage('auth_token')
+
+    try {
+        const req = await Instance.post(CREATE_HEADS, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        return req.data
+
+    } catch (err: any) {
+        console.warn("Error:", err.message);
+        if (err.response) {
+            Toast.show({
+                type: "error",
+                text1: "❌ Error",
+                text2Style: {
+                    fontSize: 12,
+                },
+                text2: err.response.data.message,
+            });
+        }
+
+    }
+
+}
+
+
+// get
+export const getHeads = async () => {
+    const token = await getLocalStorage('auth_token')
+
+    try {
+        const req = await Instance.get(GET_HEADS, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        console.log(req)
+        return req.data
+
+    } catch (err: any) {
+        console.warn("Error:", err.message);
+        if (err.response) {
+            Toast.show({
+                type: "error",
+                text1: "❌ Error",
+                text2Style: {
+                    fontSize: 12,
+                },
+                text2: err.response.data.message,
+            });
+        }
+
+    }
+
 }

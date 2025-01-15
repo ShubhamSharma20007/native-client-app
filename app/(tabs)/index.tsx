@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-
+import { Link } from "expo-router";
 import {
   View,
   Text,
@@ -9,8 +9,11 @@ import {
   StatusBar,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { getHeads } from "@/helper/api-communication";
 
 const Drawer = createDrawerNavigator();
 
@@ -23,19 +26,36 @@ interface Customer {
   lastAction?: string;
 }
 
-const CustomersScreen = ({ navigation }) => {
+interface Head {
+  createdAt: string;
+  financial_year_id: string;
+  head_name: string;
+  opening_balance_bank: string;
+  opening_balance_cash: string;
+  status: boolean;
+  updatedAt: string;
+  user_id: string;
+  __v?: number | boolean;
+  _id: string;
+}
+
+const CustomersScreen = ({ navigation }: { navigation: any }) => {
+  const router = useRouter();
   const customers: Customer[] = [
     { id: "IS", name: "Ishan Sharma", amount: 4567, dueDate: "20 Sep 2023" },
     { id: "RV", name: "Raaghav Verma", amount: 47, dueDate: "12 days" },
-    {
-      id: "V",
-      name: "Virat",
-      amount: 1102,
-      reminderDate: "Reminder sent today",
-    },
-    { id: "VK", name: "Vyom Kushwaha", amount: 190, lastAction: "4 days ago" },
-    { id: "K", name: "Karttikeya", amount: 0, dueDate: "Today" },
   ];
+
+  const [customer, setCustomer] = useState<Head[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const getHeadsData = await getHeads();
+      if (getHeadsData?.data?.data.length > 0) {
+        setCustomer(getHeadsData?.data?.data);
+      }
+    })();
+  }, []);
 
   return (
     <>
@@ -43,42 +63,90 @@ const CustomersScreen = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.storePicker}>
-            <Text style={styles.storeText}>Ekta Stores</Text>
-            <Ionicons name="chevron-down" size={20} color="white" />
+            <Ionicons name="book-outline" size={24} color="white" />
+            <Text style={styles.storeText}>Rojmel Store</Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.openDrawer()}>
-            <Text style={styles.staffText}>Staff</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Rest of your existing code */}
-        <View style={styles.actionButtons}>
+        <View style={[styles.balanceCard]}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRightWidth: 1,
+                borderRightColor: "#eee",
+              }}
+            >
+              <Text
+                style={[
+                  styles.balanceAmount,
+                  {
+                    color: "#4CAF50",
+                  },
+                ]}
+              >
+                ₹ 234
+              </Text>
+              <Text style={[styles.balanceLabel]}>Payment In</Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={[
+                  styles.balanceAmount,
+                  {
+                    color: "#FF5757",
+                  },
+                ]}
+              >
+                ₹ 234
+              </Text>
+              <Text style={styles.balanceLabel}>Payment Out</Text>
+            </View>
+          </View>
+        </View>
+        {/* <View style={styles.actionButtons}>
           <View style={styles.actionItem}>
             <View style={[styles.actionIcon, { backgroundColor: "#FF5757" }]}>
               <Text style={styles.iconText}>₹</Text>
             </View>
-            <Text style={styles.actionText}>Send Money</Text>
+            <Text style={styles.actionText}></Text>
           </View>
           <View style={styles.actionItem}>
             <View style={[styles.actionIcon, { backgroundColor: "#4CAF50" }]}>
               <Ionicons name="document-text" size={20} color="white" />
             </View>
-            <Text style={styles.actionText}>Payment History</Text>
+            <Text style={styles.actionText}>Payment In</Text>
           </View>
           <TouchableOpacity style={styles.loanButton}>
             <Text style={styles.loanText}>Get Loan upto ₹1 Lakh</Text>
             <Text style={styles.applyText}>Apply</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        <View style={styles.tabContainer}>
+        {/* <View style={styles.tabContainer}>
           <TouchableOpacity style={[styles.tab, styles.activeTab]}>
             <Text style={styles.activeTabText}>Customers</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.tab}>
             <Text style={styles.tabText}>Suppliers</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#666" />
@@ -96,39 +164,52 @@ const CustomersScreen = ({ navigation }) => {
         </View>
 
         <ScrollView>
-          {customers.map((customer) => (
-            <View key={customer.id} style={styles.customerItem}>
-              <View style={styles.customerInfo}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>{customer.id}</Text>
+          {customers.map((customer, index) => (
+            <Link
+              key={index}
+              href={{
+                pathname: "/user_details/[id]",
+                params: { id: index },
+              }}
+            >
+              <View key={customer.id} style={styles.customerItem}>
+                <View style={styles.customerInfo}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.avatarText}>{customer.id}</Text>
+                  </View>
+                  <View>
+                    <Text style={styles.customerName}>{customer.name}</Text>
+                    {customer.dueDate && (
+                      <Text style={styles.dueDate}>
+                        Due in {customer.dueDate}
+                      </Text>
+                    )}
+                    {customer.reminderDate && (
+                      <Text style={styles.dueDate}>
+                        {customer.reminderDate}
+                      </Text>
+                    )}
+                    {customer.lastAction && (
+                      <Text style={styles.dueDate}>{customer.lastAction}</Text>
+                    )}
+                  </View>
                 </View>
-                <View>
-                  <Text style={styles.customerName}>{customer.name}</Text>
-                  {customer.dueDate && (
-                    <Text style={styles.dueDate}>
-                      Due in {customer.dueDate}
-                    </Text>
-                  )}
-                  {customer.reminderDate && (
-                    <Text style={styles.dueDate}>{customer.reminderDate}</Text>
-                  )}
-                  {customer.lastAction && (
-                    <Text style={styles.dueDate}>{customer.lastAction}</Text>
-                  )}
+                <View style={styles.amountContainer}>
+                  <Text style={styles.amount}>₹{customer.amount}</Text>
+                  <TouchableOpacity style={styles.requestButton}>
+                    <Text style={styles.requestText}>REQUEST</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.amountContainer}>
-                <Text style={styles.amount}>₹{customer.amount}</Text>
-                <TouchableOpacity style={styles.requestButton}>
-                  <Text style={styles.requestText}>REQUEST</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            </Link>
           ))}
         </ScrollView>
 
-        <TouchableOpacity style={styles.addButton}>
-          <Text style={styles.addButtonText}>ADD CUSTOMER</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => router.push("/components/personAddForm")}
+        >
+          <Text style={styles.addButtonText}>ADD HEAD</Text>
         </TouchableOpacity>
       </View>
     </>
@@ -152,7 +233,7 @@ const Dashboard = () => {
   return (
     <Drawer.Navigator>
       <Drawer.Screen
-        name="Customers"
+        name="index"
         component={CustomersScreen}
         options={{
           headerShown: false,
@@ -180,12 +261,53 @@ const styles = StyleSheet.create({
   },
   storePicker: {
     flexDirection: "row",
+    gap: 10,
     alignItems: "center",
+  },
+  balanceContainer: {
+    padding: 5,
+  },
+  balanceCard: {
+    backgroundColor: "#fff",
+
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 2,
+  },
+  balanceAmount: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  balanceLabel: {
+    fontSize: 14,
+    color: "#666",
+  },
+  balanceDetails: {
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+    paddingTop: 16,
+  },
+  balanceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  balanceText: {
+    color: "#666",
+  },
+  balanceValue: {
+    fontWeight: "bold",
   },
   storeText: {
     color: "white",
-    fontSize: 18,
+    fontSize: 20,
     marginRight: 8,
+    fontWeight: "bold",
+    letterSpacing: 0.5,
   },
   staffText: {
     color: "white",
@@ -268,6 +390,7 @@ const styles = StyleSheet.create({
   },
   customerItem: {
     flexDirection: "row",
+    width: "100%",
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",

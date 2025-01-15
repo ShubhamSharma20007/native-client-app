@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const setLocalStorage = async (key: string, value: string) => {
-    return AsyncStorage.setItem(key, JSON.stringify(value))
+    return AsyncStorage.setItem(key, value)
 
 }
 

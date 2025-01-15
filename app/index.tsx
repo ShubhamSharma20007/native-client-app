@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
-import { Link, router } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Toast from "react-native-toast-message";
 import { Instance } from "@/lib/instance";
@@ -40,6 +40,7 @@ export default function Login() {
       const response = await Instance.post(LOGIN, inputsValue);
       if (response.status === 200 || response.status === 201) {
         const token = response.data.data.token;
+        console.log(token);
         await setLocalStorage("auth_token", token);
         Toast.show({
           type: "success",
@@ -52,7 +53,7 @@ export default function Login() {
         router.push("/(tabs)");
       }
     } catch (err: any) {
-      console.warn("Error:", err);
+      console.warn("Error:", err.message);
       Toast.show({
         type: "error",
         text1: "❌ Error",
@@ -65,101 +66,105 @@ export default function Login() {
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/images/background_image.jpg")}
-      style={styles.backgroundImage}
-    >
-      <StatusBar animated={true} />
-      <View style={styles.mainContainer}>
-        <View
-          style={{
-            height: 260,
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={[styles.title, { color: "#1a237e" }]}>Sign In</Text>
-          <Text style={styles.desc}>Welcome back you've</Text>
-          <Text style={styles.desc}>been missed!</Text>
-        </View>
-
-        <View style={{ marginBottom: 10 }}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Account Number"
-              inputMode="decimal"
-              value={inputsValue.bank_account_no}
-              onChangeText={(text) =>
-                setInputsValue((prev) => ({
-                  ...prev,
-                  bank_account_no: text,
-                }))
-              }
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry={true}
-              value={inputsValue.password}
-              onChangeText={(text) =>
-                setInputsValue((prev) => ({ ...prev, password: text }))
-              }
-            />
-          </View>
-        </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            handleSubmit();
-          }}
-        >
-          <Text style={styles.textButton}>Login</Text>
-        </TouchableOpacity>
-
-        <View
-          style={{
-            height: 100,
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Link
-            href="/resetPassword"
+    <>
+      {/* <Redirect href={"/(tabs)"} /> */}
+      <ImageBackground
+        source={require("../assets/images/background_image.jpg")}
+        style={styles.backgroundImage}
+      >
+        <StatusBar animated={true} />
+        <View style={styles.mainContainer}>
+          <View
             style={{
-              textAlign: "center",
-              fontSize: 16,
-              fontWeight: "600",
-              color: "#1a237e",
+              height: 260,
+              flexDirection: "column",
+              justifyContent: "center",
             }}
           >
-            Forgot Password
-          </Link>
-        </View>
-        <View
-          style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}
-        >
-          <Text style={{ textAlign: "center", fontSize: 16 }}>
-            Don't have an account?
-          </Text>
+            <Text style={[styles.title, { color: "#1a237e" }]}>Sign In</Text>
+            <Text style={styles.desc}>Welcome back you've</Text>
+            <Text style={styles.desc}>been missed!</Text>
+          </View>
 
-          <TouchableOpacity onPress={() => router.push("/register")}>
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 16,
-                color: "#1a237e",
-                fontWeight: "700",
-              }}
-            >
-              Sign Up
-            </Text>
+          <View style={{ marginBottom: 10 }}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Account Number"
+                inputMode="decimal"
+                placeholderTextColor={"black"}
+                value={inputsValue.bank_account_no}
+                onChangeText={(text) =>
+                  setInputsValue((prev) => ({
+                    ...prev,
+                    bank_account_no: text,
+                  }))
+                }
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor={"black"}
+                secureTextEntry={true}
+                value={inputsValue.password}
+                onChangeText={(text) =>
+                  setInputsValue((prev) => ({ ...prev, password: text }))
+                }
+              />
+            </View>
+            <View>
+              <Link
+                href="/resetPassword"
+                style={{
+                  textAlign: "right",
+                  fontSize: 16,
+                  fontWeight: "600",
+                  color: "#1a237e",
+                }}
+              >
+                Forgot your password?
+              </Link>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              handleSubmit();
+            }}
+          >
+            <Text style={styles.textButton}>Login</Text>
           </TouchableOpacity>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: 6,
+              marginTop: 20,
+            }}
+          >
+            <Text style={{ textAlign: "center", fontSize: 16 }}>
+              Don't have an account?
+            </Text>
+
+            <TouchableOpacity onPress={() => router.push("/register")}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 16,
+                  color: "#1a237e",
+                  fontWeight: "700",
+                }}
+              >
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </>
   );
 }
 
@@ -183,7 +188,8 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 10,
     borderRadius: 10,
-    fontSize: 16,
+    color: "black",
+    fontSize: 14,
     fontWeight: "semibold",
   },
   button: {

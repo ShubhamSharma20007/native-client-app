@@ -219,7 +219,8 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="BRC Full Name *"
+                  placeholderTextColor={"black"}
+                  placeholder="Principle / Worden / CRC / BRC Full Name *"
                   value={formData.brc_full_name}
                   onChangeText={(value) =>
                     handleInputChange("brc_full_name", value)
@@ -229,6 +230,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="School Name *"
                   value={formData.school_name}
                   onChangeText={(value) =>
@@ -240,6 +242,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="School Dise Code *"
                   inputMode="numeric"
                   value={formData.school_dice_code}
@@ -251,6 +254,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Rojmel Name *"
                   value={formData.rojmel_name}
                   onChangeText={(value) =>
@@ -261,6 +265,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Cluster Name *"
                   value={formData.cluster_name}
                   onChangeText={(value) =>
@@ -271,6 +276,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Block Name *"
                   value={formData.block_name}
                   onChangeText={(value) =>
@@ -286,6 +292,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Bank Name *"
                   value={formData.bank_name}
                   onChangeText={(value) =>
@@ -296,6 +303,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Bank Branch Name *"
                   value={formData.bank_branch_name}
                   onChangeText={(value) =>
@@ -306,6 +314,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Bank Account Name *"
                   maxLength={12}
                   inputMode="numeric"
@@ -318,6 +327,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Address *"
                   value={formData.address}
                   onChangeText={(value) => handleInputChange("address", value)}
@@ -326,6 +336,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="District *"
                   value={formData.district}
                   onChangeText={(value) => handleInputChange("district", value)}
@@ -334,6 +345,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Sub Division *"
                   value={formData.sub_division}
                   onChangeText={(value) =>
@@ -344,6 +356,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Pincode *"
                   maxLength={6}
                   inputMode="numeric"
@@ -359,6 +372,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Mobile Number *"
                   maxLength={10}
                   inputMode="numeric"
@@ -371,6 +385,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Business Email *"
                   value={formData.business_email}
                   onChangeText={(value) =>
@@ -381,6 +396,7 @@ export default function Register() {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
+                  placeholderTextColor={"black"}
                   placeholder="Password *"
                   secureTextEntry
                   value={formData.password}
@@ -437,7 +453,6 @@ export default function Register() {
             <TouchableOpacity onPress={() => router.push("/")}>
               <Text
                 style={{
-                  textAlign: "center",
                   fontSize: 16,
                   color: "#1a237e",
                   fontWeight: "700",
@@ -468,7 +483,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 10,
     borderRadius: 10,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "semibold",
   },
   button: {
