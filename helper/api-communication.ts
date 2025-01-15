@@ -131,3 +131,35 @@ export const getHeads = async () => {
     }
 
 }
+
+
+//  update head
+
+export const updateHeads = async (id: string, head: any) => {
+    const token = await getLocalStorage('auth_token')
+
+    try {
+        const req = await Instance.put(`${GET_HEADS}/${id}`, head, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+
+        return req.data
+
+    } catch (err: any) {
+        console.warn("Error:", err.message);
+        if (err.response) {
+            Toast.show({
+                type: "error",
+                text1: "❌ Error",
+                text2Style: {
+                    fontSize: 12,
+                },
+                text2: err.response.data.message,
+            });
+        }
+
+    }
+
+}

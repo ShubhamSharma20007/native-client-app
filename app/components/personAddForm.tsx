@@ -17,10 +17,11 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { createHead } from "@/helper/api-communication";
 import Toast from "react-native-toast-message";
 const headImage = require("../../assets/images/undraw_contract_upwc.png");
+import { useCustomerContext } from "../context/customerContext";
 const PersonAddForm = () => {
   const [inputValue, setInputValue] = useState("");
   const [entries, setEntries] = useState<any>([]);
-
+  const { setCustomers } = useCustomerContext();
   const handleAdd = () => {
     const numberOfRows = parseInt(inputValue);
     if (!numberOfRows || numberOfRows <= 0) {
@@ -69,6 +70,9 @@ const PersonAddForm = () => {
       return rest;
     });
     const data = await createHead(removeIdEnteries);
+    console.log("---------------------- new head -----------------------");
+
+    setCustomers((prev) => [...prev, ...data.data]);
     if (data.statusCode === 201 || data.statusCode === 200) {
       Toast.show({
         type: "success",
@@ -169,13 +173,8 @@ const PersonAddForm = () => {
           <>
             <View style={styles.tableHeader}>
               <Text style={[styles.headerCell, { flex: 1.8 }]}>Head Name</Text>{" "}
-              // name
-              <Text style={[styles.headerCell, { flex: 1.2 }]}>
-                Bank Amt.
-              </Text>{" "}
-              //type
-              <Text style={[styles.headerCell, { flex: 1 }]}>Cash Amt.</Text> //
-              amount
+              <Text style={[styles.headerCell, { flex: 1.2 }]}>Bank Amt.</Text>{" "}
+              <Text style={[styles.headerCell, { flex: 1 }]}>Cash Amt.</Text>
               <Text style={[styles.headerCell, { flex: 0.6 }]}> </Text>
             </View>
 

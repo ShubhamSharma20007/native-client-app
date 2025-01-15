@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-let DEV_BACKEND_URL = Platform.OS === 'web' ? 'http://localhost:5000' : 'http://192.168.7.123:5000'
+let DEV_BACKEND_URL = Platform.OS === 'web' ? 'http://localhost:5000' : 'http://192.168.1.38:5000'
 // process.env.EXPO_PUBLIC_BACKEND_URL
 const API_ROUTE = `${DEV_BACKEND_URL}/${process.env.EXPO_PUBLIC_API_PREFIX}/${process.env.EXPO_PUBLIC_API_VERSION}`
 
@@ -17,3 +17,4 @@ export const RESET_PASSWORD = `${API_ROUTE}/${AUTH}/reset-password`
 const Heads = 'heads'
 export const CREATE_HEADS = `${API_ROUTE}/${Heads}/`;
 export const GET_HEADS = `${API_ROUTE}/${Heads}/`;
+export const UPDATE_HEADS = `${API_ROUTE}/${Heads}/`; //:id
