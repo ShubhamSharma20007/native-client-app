@@ -50,7 +50,7 @@ export default function Login() {
             fontSize: 12,
           },
         });
-        router.push("/(tabs)");
+        router.push("/(tabs)/home");
       }
     } catch (err: any) {
       console.warn("Error:", err.message);
@@ -67,7 +67,7 @@ export default function Login() {
 
   return (
     <>
-      <Redirect href={"/(tabs)"} />
+      {/* <Redirect href={"/(tabs)"} /> */}
       <ImageBackground
         source={require("../assets/images/background_image.jpg")}
         style={styles.backgroundImage}

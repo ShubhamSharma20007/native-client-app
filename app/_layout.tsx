@@ -5,7 +5,26 @@ export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 import Toast from "react-native-toast-message";
+import { getLocalStorage } from "@/helper/asyncStorage";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+
 export default function Layout() {
+  const router = useRouter();
+  const _retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token')
+      if (value === null) {
+        router.push('/')
+      }
+    } catch (error:any) {
+     throw new Error(error)
+    }
+  };
+  useEffect(()=>{
+    _retrieveData()
+  },[])
   return (
     <CustomerContextProvide>
       <GestureHandlerRootView

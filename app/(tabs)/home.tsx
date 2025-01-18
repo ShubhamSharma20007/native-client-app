@@ -11,26 +11,19 @@ import {
   TextInput,
   Platform,
   Keyboard,
+  Image,
+  Alert
 } from "react-native";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { getHeads, updateHeads } from "@/helper/api-communication";
+import { deleteHead, getHeads, updateHeads } from "@/helper/api-communication";
 import { handleSplitName } from "@/helper/splitName";
 import { currency } from "@/helper/currency";
-import { useNavigation } from "expo-router";
+
 import { useRoute } from "@react-navigation/native";
 import { useCustomerContext } from "../context/customerContext";
+const BlankImage = require("../../assets/images/blank.png");
 const Drawer = createDrawerNavigator();
-
-interface Customer {
-  id: string;
-  name: string;
-  amount: number;
-  dueDate?: string;
-  reminderDate?: string;
-  lastAction?: string;
-}
 
 interface EditedValues {
   head_name: string;
@@ -43,11 +36,32 @@ const CustomersScreen = ({ navigation }: { navigation: any }) => {
   const route = useRoute();
   const { customer, setCustomers } = useCustomerContext();
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [filterData,setFilterData] = useState<any>([]);
+  const [isSorted, setIsSorted] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [editedValues, setEditedValues] = useState<EditedValues>({
     head_name: "",
     opening_balance_bank: "",
     opening_balance_cash: "",
   });
+
+
+  useEffect(() => {
+    let newFilterData = [...customer];
+
+    if (searchQuery.trim().length > 0) {
+      newFilterData = newFilterData.filter((item) =>
+        item.head_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+
+    if (isSorted) {
+      newFilterData.sort((a, b) => a.head_name.localeCompare(b.head_name));
+    }
+
+    setFilterData(newFilterData);
+  }, [customer, searchQuery, isSorted]);
 
   useEffect(() => {
     (async () => {
@@ -75,6 +89,7 @@ const CustomersScreen = ({ navigation }: { navigation: any }) => {
       const getHeadsData = await getHeads();
       if (getHeadsData?.data.length > 0) {
         setCustomers(getHeadsData?.data);
+        setFilterData(getHeadsData?.data);
       }
       setEditingId(null);
       setEditedValues({
@@ -91,6 +106,48 @@ const CustomersScreen = ({ navigation }: { navigation: any }) => {
       [field]: value,
     }));
   };
+
+
+
+    const handleDeleteHead =async(id:string)=>{
+      Alert.alert('Delete Head', 'Are you sure you want to delete this head?',[
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () =>{
+        console.log('----------------delete -------------------')
+      const result = await deleteHead(id);
+          if(result.statusCode === 200){
+         
+            setCustomers((prev)=>[...prev.filter((item)=>item._id !== id)]);
+            setEditingId(null);
+          }
+          }
+        }
+      ])
+  }
+
+  
+  const totalBankAmount = customer.reduce((acc, customer) => acc + parseFloat(customer.opening_balance_bank), 0);
+  const totalCashAmount = customer.reduce((acc, customer) => acc + parseFloat(customer.opening_balance_cash), 0);
+
+
+
+
+
+
+  const handleFilterHead = (str: string) => {
+    setSearchQuery(str);
+  };
+
+
+  const handleSortHead = () => {
+    setIsSorted(!isSorted);
+  };n
+
 
   return (
     <>
@@ -129,9 +186,9 @@ const CustomersScreen = ({ navigation }: { navigation: any }) => {
                   },
                 ]}
               >
-                ₹ 234
+                ₹ {totalBankAmount}
               </Text>
-              <Text style={[styles.balanceLabel]}>Payment In</Text>
+              <Text style={[styles.balanceLabel]}>Total Bank Amount</Text>
             </View>
             <View
               style={{
@@ -145,13 +202,13 @@ const CustomersScreen = ({ navigation }: { navigation: any }) => {
                 style={[
                   styles.balanceAmount,
                   {
-                    color: "#FF5757",
+                    color: "#4CAF50",
                   },
                 ]}
               >
-                ₹ 234
+                ₹ {totalCashAmount}
               </Text>
-              <Text style={styles.balanceLabel}>Payment Out</Text>
+              <Text style={styles.balanceLabel}>Total Cash Amount</Text>
             </View>
           </View>
         </View>
@@ -159,189 +216,212 @@ const CustomersScreen = ({ navigation }: { navigation: any }) => {
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#666" />
           <TextInput
-            style={styles.searchInput}
-            placeholder="Search Customers"
+         
+            style={[styles.searchInput,{height:'100%'}]}
+            onChangeText={handleFilterHead}
+            value={searchQuery}
             placeholderTextColor="#666"
+            
           />
           <View style={styles.filterContainer}>
-            <Ionicons name="filter" size={20} color="#666" />
-            <TouchableOpacity onPress={() => navigation.openDrawer()}>
+           <TouchableOpacity onPress={handleSortHead}>
+           <Ionicons name="filter" size={20} color="#666" />
+           </TouchableOpacity>
+            {/* <TouchableOpacity onPress={() => navigation.openDrawer()}>
               <Ionicons name="menu" size={20} color="#666" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
 
-        <ScrollView>
-          {customer.map((customer, index) =>
-            editingId === index ? (
-              <View
-                key={`editingId-${customer._id}`}
-                style={styles.customerItem}
-              >
-                <View style={[styles.customerInfo, { flex: 3 }]}>
-                  <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>
-                      {handleSplitName(customer.head_name)}
-                    </Text>
-                  </View>
-                  <View style={{ gap: 4 }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 2,
-                      }}
-                    >
-                      <Text style={{ fontWeight: "500", fontSize: 13 }}>
-                        Head Name :{" "}
-                      </Text>
-                      <TextInput
-                        style={{
-                          borderWidth: 1,
-                          borderColor: "#ddd",
-                          padding: 6,
-
-                          borderRadius: 4,
-                          width: "40%",
-                          fontSize: 11.5,
-                        }}
-                        value={editedValues.head_name}
-                        onChangeText={(value) =>
-                          handleChange("head_name", value)
-                        }
-                        keyboardType="default"
-                        placeholder="Head Name"
-                      />
-                    </View>
-
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 15,
-                      }}
-                    >
-                      <Text style={{ fontWeight: "500", fontSize: 13 }}>
-                        Bank Amt :{" "}
-                      </Text>
-                      <TextInput
-                        style={{
-                          borderWidth: 1,
-                          borderColor: "#ddd",
-                          padding: 6,
-
-                          borderRadius: 4,
-                          width: "40%",
-                          fontSize: 11.5,
-                        }}
-                        value={editedValues.opening_balance_bank}
-                        onChangeText={(value) =>
-                          handleChange("opening_balance_bank", value)
-                        }
-                        keyboardType="numeric"
-                        placeholder="Opening Balance Bank"
-                      />
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 15,
-                      }}
-                    >
-                      <Text style={{ fontWeight: "500", fontSize: 13 }}>
-                        Cash Amt :{" "}
-                      </Text>
-                      <TextInput
-                        style={{
-                          borderWidth: 1,
-                          borderColor: "#ddd",
-                          padding: 6,
-                          borderRadius: 4,
-                          width: "40%",
-                          fontSize: 11.5,
-                        }}
-                        value={editedValues.opening_balance_cash}
-                        onChangeText={(value) =>
-                          handleChange("opening_balance_cash", value)
-                        }
-                        keyboardType="numeric"
-                        placeholder="Opening Balance Cash"
-                      />
-                    </View>
-                  </View>
-                </View>
-                <View style={[styles.amountContainer, { flex: 1 }]}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleSubmit(customer._id);
-                    }}
-                    style={styles.requestButton}
-                  >
-                    <EvilIcons
-                      style={{ color: "#1976D2" }}
-                      name="check"
-                      size={22}
-                      color="black"
-                    />
-                    <Text style={styles.requestText}>Submit</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ) : (
-              <>
+        <ScrollView contentContainerStyle={{
+          height:'100%'
+        }}>
+         {
+          filterData.length > 0 ?(
+            filterData.map((customer:any, index:number) =>
+              editingId === index ? (
                 <View
-                  key={`original-${customer._id}`}
+                  key={`editingId-${customer._id}`}
                   style={styles.customerItem}
                 >
-                  <View style={styles.customerInfo}>
+                  <View style={[styles.customerInfo, { flex: 3 }]}>
                     <View style={styles.avatar}>
                       <Text style={styles.avatarText}>
                         {handleSplitName(customer.head_name)}
                       </Text>
                     </View>
-                    <View>
-                      <Text style={styles.customerName}>
-                        {customer.head_name}
-                      </Text>
-                      {customer.updatedAt && (
-                        <Text style={[styles.dueDate]}>
-                          Opening Bal :{" "}
-                          <Text style={{ fontWeight: "500" }}>
-                            {currency(customer.opening_balance_bank)}
-                          </Text>
+                    <View style={{ gap: 4 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 2,
+                        }}
+                      >
+                        <Text style={{ fontWeight: "500", fontSize: 13 }}>
+                          Head Name :{" "}
                         </Text>
-                      )}
-                      {customer.updatedAt && (
-                        <Text style={styles.dueDate}>
-                          Opening Cash :{" "}
-                          <Text style={{ fontWeight: "500" }}>
-                            {currency(customer.opening_balance_cash)}
-                          </Text>
+                        <TextInput
+                          style={{
+                            borderWidth: 1,
+                            borderColor: "#ddd",
+                            padding: 6,
+  
+                            borderRadius: 4,
+                            width: "40%",
+                            fontSize: 11.5,
+                          }}
+                          value={editedValues.head_name}
+                          onChangeText={(value) =>
+                            handleChange("head_name", value)
+                          }
+                          keyboardType="default"
+                          placeholder="Head Name"
+                        />
+                      </View>
+  
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 15,
+                        }}
+                      >
+                        <Text style={{ fontWeight: "500", fontSize: 13 }}>
+                          Bank Amt :{" "}
                         </Text>
-                      )}
+                        <TextInput
+                          style={{
+                            borderWidth: 1,
+                            borderColor: "#ddd",
+                            padding: 6,
+  
+                            borderRadius: 4,
+                            width: "40%",
+                            fontSize: 11.5,
+                          }}
+                          value={editedValues.opening_balance_bank}
+                          onChangeText={(value) =>
+                            handleChange("opening_balance_bank", value)
+                          }
+                          keyboardType="numeric"
+                          placeholder="Opening Balance Bank"
+                        />
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 15,
+                        }}
+                      >
+                        <Text style={{ fontWeight: "500", fontSize: 13 }}>
+                          Cash Amt :{" "}
+                        </Text>
+                        <TextInput
+                          style={{
+                            borderWidth: 1,
+                            borderColor: "#ddd",
+                            padding: 6,
+                            borderRadius: 4,
+                            width: "40%",
+                            fontSize: 11.5,
+                          }}
+                          value={editedValues.opening_balance_cash}
+                          onChangeText={(value) =>
+                            handleChange("opening_balance_cash", value)
+                          }
+                          keyboardType="numeric"
+                          placeholder="Opening Balance Cash"
+                        />
+                      </View>
                     </View>
                   </View>
-                  <View style={styles.amountContainer}>
+                  <View style={[styles.amountContainer, { flex: 1}]}>
                     <TouchableOpacity
                       onPress={() => {
-                        handleEdit(index, customer);
+                        handleSubmit(customer._id);
                       }}
                       style={styles.requestButton}
                     >
-                      <EvilIcons
-                        style={{ color: "#1976D2" }}
-                        name="pencil"
-                        size={22}
-                        color="black"
-                      />
-                      <Text style={styles.requestText}>UPDATE</Text>
+                     
+                      <Text style={styles.requestText}>SUBMIT</Text>
                     </TouchableOpacity>
+                    
                   </View>
                 </View>
-              </>
+              ) : (
+                <>
+                  <View
+                    key={`original-${customer._id}`}
+                    style={styles.customerItem}
+                  >
+                    <View style={[styles.customerInfo,{flex:1}]}>
+                      <View style={styles.avatar}>
+                        <Text style={styles.avatarText}>
+                          {handleSplitName(customer.head_name)}
+                        </Text>
+                      </View>
+                      <View style={{flex:1}}>
+                        <Text style={styles.customerName}>
+                          {customer.head_name}
+                        </Text>
+                        {customer.updatedAt && (
+                          <Text style={[styles.dueDate]}>
+                            Bank Amount :{" "}
+                            <Text style={{ fontWeight: "500" }}>
+                              {currency(customer.opening_balance_bank)}
+                            </Text>
+                          </Text>
+                        )}
+                        {customer.updatedAt && (
+                          <Text style={styles.dueDate}>
+                            Cash Amount :{" "}
+                            <Text style={{ fontWeight: "500" }}>
+                              {currency(customer.opening_balance_cash)}
+                            </Text>
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                    <View style={[styles.amountContainer,{gap:5 }]}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleEdit(index, customer);
+                        }}
+                        style={styles.requestButton}
+                      >
+                        
+                        <Text style={styles.requestText}>UPDATE</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                      onPress={() => {
+                        handleDeleteHead(customer._id);
+                      }}
+                      style={styles.deleteButton}
+                    >
+                      <Text style={[styles.requestText,{color:'white'}]}>DELETE</Text>
+                    </TouchableOpacity>
+                    </View>
+                  </View>
+                </>
+              )
             )
-          )}
+          ):(
+            <View style={{ height: '100%',flexGrow:1, justifyContent: "center", alignItems: "center"}}>
+            <Image
+              source={BlankImage}
+              style={{
+                height:'80%',
+                width: '80%',
+                objectFit:'contain',
+                resizeMode: "contain",
+                justifyContent: "center",
+              }}
+            ></Image>
+          </View>
+          )
+         }
         </ScrollView>
 
         <TouchableOpacity
@@ -557,6 +637,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     marginBottom: 4,
+    textTransform:'capitalize'
   },
   dueDate: {
     fontSize: 12,
@@ -570,6 +651,19 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginBottom: 4,
   },
+  deleteButton:{
+    backgroundColor: "#ff00008a",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    display:'flex',
+    justifyContent:'center',
+    flexDirection: "row",
+    alignItems: "center",
+    color:'white',
+
+
+  },
   requestButton: {
     backgroundColor: "#E3F2FD",
     paddingHorizontal: 8,
@@ -577,12 +671,13 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
-    width: "100%",
-    gap: 1,
+   
   },
   requestText: {
     color: "#1976D2",
     fontSize: 12,
+    
+    
   },
   addButton: {
     backgroundColor: "#1a237e",

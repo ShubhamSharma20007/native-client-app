@@ -1,6 +1,6 @@
 import { Instance } from "@/lib/instance";
 import Toast from "react-native-toast-message";
-import { FORGET_PASSWORD, RESET_PASSWORD, CREATE_HEADS, GET_HEADS } from "@/constant/apis";
+import { FORGET_PASSWORD, RESET_PASSWORD, CREATE_HEADS, GET_HEADS, DELETE_HEAD } from "@/constant/apis";
 import { HeadInferface } from "@/types/headType"
 import { getLocalStorage } from "@/helper/asyncStorage"
 //  Forget Password
@@ -112,21 +112,11 @@ export const getHeads = async () => {
                 'Authorization': `Bearer ${token}`
             }
         })
-        console.log(req)
+
         return req.data
 
     } catch (err: any) {
-        console.warn("Error:", err.message);
-        if (err.response) {
-            Toast.show({
-                type: "error",
-                text1: "❌ Error",
-                text2Style: {
-                    fontSize: 12,
-                },
-                text2: err.response.data.message,
-            });
-        }
+        console.warn("Error in getHeads:", err.message);
 
     }
 
@@ -162,4 +152,34 @@ export const updateHeads = async (id: string, head: any) => {
 
     }
 
+}
+
+// delete head
+
+export const deleteHead = async (id: string) => {
+    const token = await getLocalStorage('auth_token')
+
+    try {
+        const req = await Instance.delete(`${DELETE_HEAD}/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+
+        return req.data
+
+    } catch (err: any) {
+        console.warn("Error:", err.message);
+        if (err.response) {
+            Toast.show({
+                type: "error",
+                text1: "❌ Error",
+                text2Style: {
+                    fontSize: 12,
+                },
+                text2: err.response.data.message,
+            });
+        }
+
+    }
 }

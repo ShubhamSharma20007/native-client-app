@@ -14,11 +14,13 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { TextInput } from "react-native-paper";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { createHead } from "@/helper/api-communication";
+import { createHead, deleteHead } from "@/helper/api-communication";
 import Toast from "react-native-toast-message";
 const headImage = require("../../assets/images/undraw_contract_upwc.png");
 import { useCustomerContext } from "../context/customerContext";
+import { useRouter } from "expo-router";
 const PersonAddForm = () => {
+  const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [entries, setEntries] = useState<any>([]);
   const { setCustomers } = useCustomerContext();
@@ -82,6 +84,7 @@ const PersonAddForm = () => {
           fontSize: 12,
         },
       });
+      router.back()
       setEntries([]);
     } else {
       Toast.show({
@@ -100,6 +103,8 @@ const PersonAddForm = () => {
     setInputValue("");
   };
 
+
+
   const memoizedEntries = useMemo(() => {
     return entries.map((entry: any) => (
       <View key={entry.id} style={styles.tableRow}>
@@ -110,7 +115,7 @@ const PersonAddForm = () => {
               handleUpdateEntry(entry.id, "head_name", value)
             }
             style={styles.cellInput}
-            placeholder="Head name"
+          
           />
         </View>
         <View style={[styles.cellContainer, { flex: 1 }]}>
@@ -120,7 +125,7 @@ const PersonAddForm = () => {
               handleUpdateEntry(entry.id, "opening_balance_bank", value)
             }
             style={styles.cellInput}
-            placeholder="Bank Amt"
+          
             keyboardType="numeric"
           />
         </View>
@@ -131,7 +136,7 @@ const PersonAddForm = () => {
               handleUpdateEntry(entry.id, "opening_balance_cash", value)
             }
             style={styles.cellInput}
-            placeholder="Cash Amt"
+       
             keyboardType="numeric"
           />
         </View>
